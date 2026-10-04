@@ -1,0 +1,9 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  participant: one
+  slot_at: 2026-10-03 15:24:31
+
+two:
+  participant: two
+  slot_at: 2026-10-03 15:24:31
