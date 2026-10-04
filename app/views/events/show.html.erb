@@ -1,65 +1,78 @@
-<% content_for :title, "#{@event.title} · Freeslot" %>
+<% content_for :title, "#{@event.title} | freeslot" %>
 <%= turbo_stream_from @event %>
 
-<h1 class="text-2xl sm:text-3xl font-bold"><%= @event.title %></h1>
-<p class="text-stone-600 mt-1">
-  <%= @event.start_date.strftime("%a %-d %b") %> – <%= @event.end_date.strftime("%a %-d %b") %>,
+<h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight leading-none"><%= @event.title %></h1>
+<p class="mt-2 text-mist">
+  <%= @event.start_date.strftime("%a %-d %b") %> to <%= @event.end_date.strftime("%a %-d %b") %>,
   <%= format("%02d:00", @event.start_hour) %>–<%= format("%02d:00", @event.end_hour) %>
 </p>
 
-<div data-controller="clipboard" class="mt-6 flex gap-2">
-  <input type="text" readonly value="<%= event_url(@event) %>"
-         data-clipboard-target="source"
-         class="flex-1 min-w-0 rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm">
-  <button type="button" data-action="clipboard#copy" data-clipboard-target="button"
-          class="rounded-lg bg-stone-900 text-white px-4 text-sm hover:bg-stone-700">
-    Copy
-  </button>
+<div data-controller="clipboard" class="mt-6 rounded-3xl bg-grape p-5 text-white">
+  <p class="text-lg font-bold">send this to the group chat</p>
+  <div class="mt-3 flex gap-2">
+    <input type="text" readonly value="<%= event_url(@event) %>"
+           data-clipboard-target="source"
+           class="flex-1 min-w-0 rounded-full bg-white/15 px-4 py-3 text-base text-white">
+    <button type="button" data-action="clipboard#copy" data-clipboard-target="button"
+            class="rounded-full bg-white px-5 font-bold text-ink hover:bg-sun transition-colors">copy</button>
+  </div>
 </div>
 
 <% if @participant %>
-  <p class="mt-8 text-sm text-stone-600">
-    You're <strong class="text-stone-900"><%= @participant.name %></strong>.
-    Tap the times you're free, tap again to undo.
-    <span class="hidden sm:inline">Click and drag to select a range.</span>
+  <p class="mt-8 text-lg">
+    hey <strong><%= @participant.name %></strong>, tap when you're free<span class="hidden sm:inline"> (or click and drag)</span>.
   </p>
 <% else %>
-  <%= form_with model: [@event, Participant.new], class: "mt-8 flex gap-2" do |f| %>
-    <%= f.text_field :name, placeholder: "Your name", required: true, maxlength: 30,
-          class: "flex-1 min-w-0 rounded-lg border border-stone-300 bg-white px-3 py-2" %>
-    <%= f.submit "Join", class: "rounded-lg bg-stone-900 text-white px-5 font-medium hover:bg-stone-700 cursor-pointer" %>
-  <% end %>
-  <p class="mt-2 text-xs text-stone-500">Already joined on another device? Enter the same name.</p>
+  <div class="mt-8 rounded-3xl border border-line bg-white p-5">
+    <p class="text-lg font-bold">who are you?</p>
+    <%= form_with model: [@event, Participant.new], class: "mt-3 flex gap-2" do |f| %>
+      <%= f.text_field :name, placeholder: "your name", required: true, maxlength: 30,
+            class: "flex-1 min-w-0 rounded-full border border-line bg-paper px-4 py-3 text-base" %>
+      <%= f.submit "i'm in",
+            class: "rounded-full bg-ink px-6 font-bold text-white hover:bg-grape transition-colors cursor-pointer" %>
+    <% end %>
+    <p class="mt-2 text-sm text-mist">on another device? use the same name to pick up where you left off.</p>
+  </div>
 <% end %>
 
-<% if @best_ranges.any? %>
-  <div class="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
-    <span class="font-semibold">Best <%= @best_ranges.size == 1 ? "time" : "times" %>:</span>
-    <%= @best_ranges.first(3).map { |from, to| "#{from.strftime('%a %-d %b, %H:%M')}–#{to.strftime('%H:%M')}" }.to_sentence %>
-    <span class="text-emerald-700">(<%= @best_count %>/<%= @names.size %> free)</span>
+<% if @best_ranges.any? && @names.size >= 2 %>
+  <% everyone = @names.size >= 2 && @best_count == @names.size %>
+  <% times = @best_ranges.first(3).map { |from, to| "#{from.strftime('%a %-d %b, %H:%M')}–#{to.strftime('%H:%M')}" }.to_sentence %>
+  <div class="mt-6 rounded-3xl px-5 py-4 <%= everyone ? 'bg-sun' : 'bg-grape-soft' %>">
+    <p class="font-bold"><%= everyone ? "everyone's free 🎉" : "best so far (#{@best_count} of #{@names.size})" %></p>
+    <p class="mt-1"><%= times %></p>
   </div>
 <% end %>
 
 <%= render "grid", event: @event, counts: @counts, my_slots: @my_slots,
            total: @names.size, participant: @participant %>
 
-<div class="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-stone-500">
-  <div class="flex items-center gap-2">
-    <span>Nobody</span>
-    <span class="h-3 w-24 rounded border border-stone-200"
-          style="background: linear-gradient(to right, rgba(16,185,129,0), rgba(16,185,129,0.85));"></span>
-    <span>Everyone</span>
-  </div>
+<div class="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-mist">
+  <span class="flex items-center gap-2">
+    1 person
+    <span class="h-3 w-20 rounded-full"
+          style="background: linear-gradient(to right, rgba(109,74,255,0.18), rgba(109,74,255,0.85));"></span>
+    most
+  </span>
+  <span class="flex items-center gap-2">
+    <span class="h-3 w-3 rounded-sm" style="background-color: #ffd23f;"></span>
+    everyone
+  </span>
   <% if @participant %>
-    <div class="flex items-center gap-2">
-      <span class="h-3 w-3 rounded-sm ring-2 ring-inset ring-stone-900"></span>
-      Your times
-    </div>
+    <span class="flex items-center gap-2">
+      <span class="h-3 w-3 rounded-sm ring-2 ring-inset ring-ink"></span>
+      you
+    </span>
   <% end %>
 </div>
 
 <% if @names.any? %>
-  <p class="mt-4 text-sm text-stone-600">
-    <%= pluralize(@names.size, "person") %> responded: <%= @names.to_sentence %>
-  </p>
+  <div class="mt-8">
+    <p class="font-bold"><%= pluralize(@names.size, "person") %> in</p>
+    <div class="mt-2 flex flex-wrap gap-2">
+      <% @names.each do |name| %>
+        <span class="rounded-full border bg-white px-3 py-1 text-sm <%= @participant&.name == name ? 'border-ink font-semibold' : 'border-line' %>"><%= name %></span>
+      <% end %>
+    </div>
+  </div>
 <% end %>

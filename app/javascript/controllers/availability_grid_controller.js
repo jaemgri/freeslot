@@ -1,6 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 
-const SELECTED = ["ring-2", "ring-inset", "ring-stone-900"]
+const SELECTED = ["ring-2", "ring-inset", "ring-ink"]
 
 export default class extends Controller {
   static values = { url: String }

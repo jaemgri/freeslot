@@ -1,21 +1,22 @@
-<div class="mt-6 overflow-x-auto rounded-lg">
-  <div class="grid gap-px bg-stone-200 min-w-max select-none"
-       style="grid-template-columns: 4rem repeat(<%= event.dates.size %>, minmax(3.5rem, 1fr));"
+<div class="mt-6 overflow-x-auto rounded-2xl border border-line">
+  <div class="grid gap-px bg-line min-w-max select-none"
+       style="grid-template-columns: 3.75rem repeat(<%= event.dates.size %>, minmax(3.5rem, 1fr));"
        <% if participant %>
          data-controller="availability-grid"
          data-availability-grid-url-value="<%= slots_event_path(event) %>"
          data-action="pointerdown->availability-grid#start pointerover->availability-grid#move pointerup@window->availability-grid#end pointercancel@window->availability-grid#cancel click->availability-grid#key"
        <% end %>>
 
-    <div class="bg-stone-50 sticky left-0 z-10"></div>
+    <div class="bg-paper sticky left-0 z-10"></div>
     <% event.dates.each do |date| %>
-      <div class="bg-stone-50 px-2 py-2 text-center text-xs font-medium">
-        <%= date.strftime("%a") %><br><%= date.strftime("%-d %b") %>
+      <div class="bg-paper px-2 py-3 text-center leading-tight">
+        <div class="text-sm font-bold lowercase"><%= date.strftime("%a") %></div>
+        <div class="text-xs text-mist lowercase"><%= date.strftime("%-d %b") %></div>
       </div>
     <% end %>
 
     <% event.time_rows.each do |minutes| %>
-      <div class="bg-stone-50 sticky left-0 z-10 pr-2 text-right text-xs text-stone-500 leading-8">
+      <div class="bg-paper sticky left-0 z-10 pr-2 text-right text-xs text-mist leading-9">
         <%= format("%02d:%02d", minutes / 60, minutes % 60) if (minutes % 60).zero? %>
       </div>
 
@@ -23,19 +24,20 @@
         <% slot = event.slot_for(date, minutes) %>
         <% count = counts[slot.to_i].to_i %>
         <% mine = my_slots.include?(slot.to_i) %>
-        <% opacity = total.zero? ? 0 : (count.to_f / total * 0.85).round(2) %>
-        <% shade = "background-color: rgba(16, 185, 129, #{opacity});" %>
-        <% label = "#{slot.strftime('%a %-d %b %H:%M')} · #{count}/#{total} free" %>
+        <% everyone = total >= 2 && count == total %>
+        <% opacity = count.zero? || total.zero? ? 0 : (0.18 + 0.67 * count.to_f / total).round(2) %>
+        <% shade = everyone ? "background-color: #ffd23f;" : "background-color: rgba(109, 74, 255, #{opacity});" %>
+        <% label = "#{slot.strftime('%a %-d %b %H:%M')}: #{count} of #{total} free" %>
 
         <div class="bg-white">
           <% if participant %>
             <button type="button"
                     data-slot="<%= slot.iso8601 %>" data-mine="<%= mine %>"
                     aria-pressed="<%= mine %>" aria-label="<%= label %>" title="<%= label %>"
-                    class="block w-full h-8 cursor-pointer hover:brightness-95 focus-visible:outline-2 focus-visible:outline-stone-900 <%= 'ring-2 ring-inset ring-stone-900' if mine %>"
+                    class="block w-full h-9 cursor-pointer <%= 'ring-2 ring-inset ring-ink' if mine %>"
                     style="<%= shade %>"></button>
           <% else %>
-            <div class="h-8" style="<%= shade %>" title="<%= label %>"></div>
+            <div class="h-9" style="<%= shade %>" title="<%= label %>"></div>
           <% end %>
         </div>
       <% end %>

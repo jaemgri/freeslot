@@ -12,7 +12,7 @@ class EventsController < ApplicationController
     @event = Event.new(event_params)
 
     if @event.save
-      redirect_to @event, notice: "Event created! Share the link below with your group."
+            redirect_to @event, notice: "your plan's ready. send the link to your friends 👇"
     else
       render :new, status: :unprocessable_entity
     end

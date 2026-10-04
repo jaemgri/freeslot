@@ -1,47 +1,49 @@
-<h1 class="text-3xl font-bold mb-2">Find a time that works</h1>
-<p class="text-stone-600 mb-8">Create an event, share the link, and see when everyone's free.</p>
+<h1 class="text-5xl sm:text-6xl font-extrabold tracking-tight leading-[0.95]">
+  when's everyone<br>actually free?
+</h1>
+<p class="mt-4 text-lg text-mist max-w-md">
+  make a plan, drop the link in the group chat, and watch the times line up. no sign-ups.
+</p>
 
-<%= form_with model: @event, class: "space-y-5 bg-white rounded-2xl shadow-sm p-6" do |f| %>
+<%= form_with model: @event, class: "mt-8 space-y-5 rounded-3xl border border-line bg-white p-5 sm:p-6" do |f| %>
   <% if @event.errors.any? %>
-    <div class="rounded-lg bg-red-50 text-red-700 px-4 py-3 text-sm">
-      <ul class="list-disc pl-5">
-        <% @event.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
+    <div class="rounded-2xl bg-red-50 text-red-700 px-4 py-3">
+      <% @event.errors.full_messages.each do |message| %>
+        <p><%= message %></p>
+      <% end %>
     </div>
   <% end %>
 
   <div>
-    <%= f.label :title, "What's it for?", class: "block text-sm font-medium mb-1" %>
-    <%= f.text_field :title, placeholder: "Karaoke night", autofocus: true,
-          class: "w-full rounded-lg border border-stone-300 px-3 py-2" %>
+    <%= f.label :title, "what's the plan?", class: "block font-semibold mb-2" %>
+    <%= f.text_field :title, placeholder: "karaoke in shibuya", autofocus: true,
+          class: "w-full rounded-2xl border border-line bg-paper px-4 py-3 text-base" %>
   </div>
 
-  <div class="grid grid-cols-2 gap-4">
+  <div class="grid grid-cols-2 gap-3">
     <div>
-      <%= f.label :start_date, "From", class: "block text-sm font-medium mb-1" %>
-      <%= f.date_field :start_date, class: "w-full rounded-lg border border-stone-300 px-3 py-2" %>
+      <%= f.label :start_date, "from", class: "block font-semibold mb-2" %>
+      <%= f.date_field :start_date, class: "w-full rounded-2xl border border-line bg-paper px-4 py-3 text-base" %>
     </div>
     <div>
-      <%= f.label :end_date, "To", class: "block text-sm font-medium mb-1" %>
-      <%= f.date_field :end_date, class: "w-full rounded-lg border border-stone-300 px-3 py-2" %>
+      <%= f.label :end_date, "to", class: "block font-semibold mb-2" %>
+      <%= f.date_field :end_date, class: "w-full rounded-2xl border border-line bg-paper px-4 py-3 text-base" %>
     </div>
   </div>
 
-  <div class="grid grid-cols-2 gap-4">
+  <div class="grid grid-cols-2 gap-3">
     <div>
-      <%= f.label :start_hour, "Earliest", class: "block text-sm font-medium mb-1" %>
+      <%= f.label :start_hour, "earliest", class: "block font-semibold mb-2" %>
       <%= f.select :start_hour, (0..23).map { |h| [format("%02d:00", h), h] }, {},
-            class: "w-full rounded-lg border border-stone-300 px-3 py-2" %>
+            class: "w-full rounded-2xl border border-line bg-paper px-4 py-3 text-base" %>
     </div>
     <div>
-      <%= f.label :end_hour, "Latest", class: "block text-sm font-medium mb-1" %>
+      <%= f.label :end_hour, "latest", class: "block font-semibold mb-2" %>
       <%= f.select :end_hour, (1..24).map { |h| [format("%02d:00", h), h] }, {},
-            class: "w-full rounded-lg border border-stone-300 px-3 py-2" %>
+            class: "w-full rounded-2xl border border-line bg-paper px-4 py-3 text-base" %>
     </div>
   </div>
 
-  <%= f.submit "Create event",
-        class: "w-full rounded-lg bg-stone-900 text-white py-3 font-medium hover:bg-stone-700 cursor-pointer" %>
+  <%= f.submit "make the link",
+        class: "w-full rounded-full bg-grape text-white py-4 text-lg font-bold hover:bg-ink transition-colors cursor-pointer" %>
 <% end %>

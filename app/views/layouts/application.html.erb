@@ -23,26 +23,32 @@
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+
+    <meta name="theme-color" content="#fbfaff">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">
   </head>
 
   <body>
-  <body class="bg-stone-50 text-stone-900 min-h-screen antialiased">
-    <header class="border-b border-stone-200 bg-white">
-      <div class="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
-        <%= link_to "Freeslot", root_path, class: "font-bold tracking-tight text-lg" %>
-        <%= link_to "+ New event", root_path, class: "text-sm text-stone-600 hover:text-stone-900" %>
-      </div>
-    </header>
+  <body class="bg-paper text-ink font-sans antialiased min-h-dvh">
+  <header class="max-w-3xl mx-auto px-5 pt-5 flex items-center justify-between">
+    <%= link_to root_path, class: "text-xl font-extrabold tracking-tight" do %>
+      freeslot<span class="text-grape">.</span>
+    <% end %>
+    <%= link_to "+ new plan", root_path,
+          class: "rounded-full border border-line bg-white px-4 py-2 text-sm font-semibold hover:border-grape" %>
+  </header>
 
-    <main class="max-w-3xl mx-auto px-4 py-8 sm:py-10">
-      <% if notice %>
-        <p class="mb-6 rounded-lg bg-emerald-50 text-emerald-800 px-4 py-3 text-sm"><%= notice %></p>
-      <% end %>
-      <% if alert %>
-        <p class="mb-6 rounded-lg bg-red-50 text-red-700 px-4 py-3 text-sm"><%= alert %></p>
-      <% end %>
+  <main class="max-w-3xl mx-auto px-5 pt-8 pb-16">
+    <% if notice %>
+      <p class="mb-6 rounded-2xl bg-grape-soft px-4 py-3 font-medium"><%= notice %></p>
+    <% end %>
+    <% if alert %>
+      <p class="mb-6 rounded-2xl bg-red-50 text-red-700 px-4 py-3 font-medium"><%= alert %></p>
+    <% end %>
 
-      <%= yield %>
-    </main>
-  </body>
+    <%= yield %>
+  </main>
+</body>
 </html>

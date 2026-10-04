@@ -1,10 +1,24 @@
-/*
- * This is a manifest file that'll be compiled into application.css.
- *
- * With Propshaft, assets are served efficiently without preprocessing steps. You can still include
- * application-wide styles in this file, but keep in mind that CSS precedence will follow the standard
- * cascading order, meaning styles declared later in the document or manifest will override earlier ones,
- * depending on specificity.
- *
- * Consider organizing styles into separate files for maintainability.
- */
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+
+  --color-paper: #fbfaff;
+  --color-ink: #1d1a2e;
+  --color-mist: #7c7694;
+  --color-line: #e6e1f5;
+  --color-grape: #6d4aff;
+  --color-grape-soft: #efeaff;
+  --color-sun: #ffd23f;
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-grape);
+    outline-offset: 2px;
+  }
+}
