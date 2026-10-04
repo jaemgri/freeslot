@@ -1,0 +1,38 @@
+<h1 class="text-3xl font-bold"><%= @event.title %></h1>
+<p class="text-stone-600 mt-1">
+  <%= @event.start_date.strftime("%a %-d %b") %> – <%= @event.end_date.strftime("%a %-d %b") %>,
+  <%= format("%02d:00", @event.start_hour) %>–<%= format("%02d:00", @event.end_hour) %>
+</p>
+
+<div data-controller="clipboard" class="mt-6 flex gap-2">
+  <input type="text" readonly value="<%= event_url(@event) %>"
+         data-clipboard-target="source"
+         class="flex-1 rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm">
+  <button type="button" data-action="clipboard#copy" data-clipboard-target="button"
+          class="rounded-lg bg-stone-900 text-white px-4 text-sm hover:bg-stone-700">
+    Copy
+  </button>
+</div>
+
+<% if @participant %>
+  <p class="mt-8 text-sm text-stone-600">
+    You're <strong class="text-stone-900"><%= @participant.name %></strong>.
+    Tap the times you're free, tap again to undo.
+  </p>
+<% else %>
+  <%= form_with model: [@event, Participant.new], class: "mt-8 flex gap-2" do |f| %>
+    <%= f.text_field :name, placeholder: "Your name", required: true, maxlength: 30,
+          class: "flex-1 rounded-lg border border-stone-300 bg-white px-3 py-2" %>
+    <%= f.submit "Join", class: "rounded-lg bg-stone-900 text-white px-5 font-medium hover:bg-stone-700 cursor-pointer" %>
+  <% end %>
+  <p class="mt-2 text-xs text-stone-500">Already joined on another device? Enter the same name.</p>
+<% end %>
+
+<%= render "grid", event: @event, counts: @counts, my_slots: @my_slots,
+           total: @names.size, participant: @participant %>
+
+<% if @names.any? %>
+  <p class="mt-4 text-sm text-stone-600">
+    <%= pluralize(@names.size, "person") %> responded: <%= @names.to_sentence %>
+  </p>
+<% end %>

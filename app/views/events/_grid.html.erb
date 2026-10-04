@@ -1,0 +1,40 @@
+<div class="mt-6 overflow-x-auto">
+  <div class="grid gap-px bg-stone-200 rounded-lg overflow-hidden min-w-max"
+       style="grid-template-columns: 4rem repeat(<%= event.dates.size %>, minmax(3.5rem, 1fr));">
+
+    <div class="bg-stone-50"></div>
+    <% event.dates.each do |date| %>
+      <div class="bg-stone-50 px-2 py-2 text-center text-xs font-medium">
+        <%= date.strftime("%a") %><br><%= date.strftime("%-d %b") %>
+      </div>
+    <% end %>
+
+    <% event.time_rows.each do |minutes| %>
+      <div class="bg-stone-50 pr-2 text-right text-xs text-stone-500 leading-8">
+        <%= format("%02d:%02d", minutes / 60, minutes % 60) if (minutes % 60).zero? %>
+      </div>
+
+      <% event.dates.each do |date| %>
+        <% slot = event.slot_for(date, minutes) %>
+        <% count = counts[slot.to_i].to_i %>
+        <% mine = my_slots.include?(slot.to_i) %>
+        <% opacity = total.zero? ? 0 : (count.to_f / total * 0.85).round(2) %>
+        <% shade = "background-color: rgba(16, 185, 129, #{opacity});" %>
+        <% label = "#{slot.strftime('%a %-d %b %H:%M')} · #{count}/#{total} free" %>
+
+        <% if participant %>
+          <%= button_to toggle_event_path(event),
+                params: { slot: slot.iso8601 },
+                form: { class: "bg-white" },
+                class: "block w-full h-8 cursor-pointer hover:brightness-95 #{'ring-2 ring-inset ring-stone-900' if mine}",
+                style: shade, title: label, "aria-label": label do %>
+          <% end %>
+        <% else %>
+          <div class="bg-white">
+            <div class="h-8" style="<%= shade %>" title="<%= label %>"></div>
+          </div>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

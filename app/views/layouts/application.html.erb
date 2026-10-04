@@ -18,13 +18,24 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
+    <%= turbo_refreshes_with method: :morph, scroll: :preserve %>
+
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
   <body>
-    <main class="container mx-auto mt-28 px-5 flex">
+  <body class="bg-stone-50 text-stone-900 min-h-screen">
+    <main class="max-w-3xl mx-auto px-4 py-10">
+      <% if notice %>
+        <p class="mb-6 rounded-lg bg-emerald-50 text-emerald-800 px-4 py-3 text-sm"><%= notice %></p>
+      <% end %>
+
+      <% if alert %>
+        <p class="mb-6 rounded-lg bg-red-50 text-red-700 px-4 py-3 text-sm"><%= alert %></p>
+      <% end %>
+
       <%= yield %>
     </main>
   </body>
