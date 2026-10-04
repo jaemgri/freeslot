@@ -34,6 +34,18 @@ class Event < ApplicationRecord
     availabilities.group(:slot_at).count
   end
 
+  # counts: { unix_timestamp => people free }. Returns [[[start, end], ...], top_count]
+  def best_ranges(counts)
+    top = counts.values.max.to_i
+    return [ [], 0 ] if top.zero?
+
+    step = SLOT_MINUTES * 60
+    starts = counts.select { |_, n| n == top }.keys.sort
+    ranges = starts.slice_when { |a, b| b - a > step }
+                   .map { |run| [ Time.zone.at(run.first), Time.zone.at(run.last + step) ] }
+    [ ranges, top ]
+  end
+
   private
 
   def generate_slug
@@ -45,7 +57,7 @@ class Event < ApplicationRecord
   end
 
   def ranges_makes_sense
-    return if [start_date, end_date, start_hour, end_hour].any?(&:nil?)
+    return if [ start_date, end_date, start_hour, end_hour ].any?(&:nil?)
 
     errors.add(:end_date, "must be on or after the start date") if end_date < start_date
     errors.add(:end_date, "can be at most #{MAX_DAYS} days after the start") if (end_date - start_date).to_i >= MAX_DAYS

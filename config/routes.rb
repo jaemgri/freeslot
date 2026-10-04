@@ -4,6 +4,6 @@ Rails.application.routes.draw do
   root "events#new"
   resources :events, only: [ :new, :create, :show ], path: "e" do
     resources :participants, only: :create
-    post :toggle, to: "availabilities#toggle", on: :member
+    post :slots, to: "availabilities#update", on: :member
   end
 end

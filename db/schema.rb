@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_03_062432) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_04_064437) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -19,6 +19,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_03_062432) do
     t.datetime "slot_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["participant_id", "slot_at"], name: "index_availabilities_on_participant_id_and_slot_at", unique: true
     t.index ["participant_id"], name: "index_availabilities_on_participant_id"
   end
 
@@ -39,6 +40,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_03_062432) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["event_id", "name"], name: "index_participants_on_event_id_and_name", unique: true
     t.index ["event_id"], name: "index_participants_on_event_id"
   end
 

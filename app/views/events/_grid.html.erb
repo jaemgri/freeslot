@@ -1,8 +1,13 @@
-<div class="mt-6 overflow-x-auto">
-  <div class="grid gap-px bg-stone-200 rounded-lg overflow-hidden min-w-max"
-       style="grid-template-columns: 4rem repeat(<%= event.dates.size %>, minmax(3.5rem, 1fr));">
+<div class="mt-6 overflow-x-auto rounded-lg">
+  <div class="grid gap-px bg-stone-200 min-w-max select-none"
+       style="grid-template-columns: 4rem repeat(<%= event.dates.size %>, minmax(3.5rem, 1fr));"
+       <% if participant %>
+         data-controller="availability-grid"
+         data-availability-grid-url-value="<%= slots_event_path(event) %>"
+         data-action="pointerdown->availability-grid#start pointerover->availability-grid#move pointerup@window->availability-grid#end pointercancel@window->availability-grid#cancel click->availability-grid#key"
+       <% end %>>
 
-    <div class="bg-stone-50"></div>
+    <div class="bg-stone-50 sticky left-0 z-10"></div>
     <% event.dates.each do |date| %>
       <div class="bg-stone-50 px-2 py-2 text-center text-xs font-medium">
         <%= date.strftime("%a") %><br><%= date.strftime("%-d %b") %>
@@ -10,7 +15,7 @@
     <% end %>
 
     <% event.time_rows.each do |minutes| %>
-      <div class="bg-stone-50 pr-2 text-right text-xs text-stone-500 leading-8">
+      <div class="bg-stone-50 sticky left-0 z-10 pr-2 text-right text-xs text-stone-500 leading-8">
         <%= format("%02d:%02d", minutes / 60, minutes % 60) if (minutes % 60).zero? %>
       </div>
 
@@ -22,18 +27,17 @@
         <% shade = "background-color: rgba(16, 185, 129, #{opacity});" %>
         <% label = "#{slot.strftime('%a %-d %b %H:%M')} · #{count}/#{total} free" %>
 
-        <% if participant %>
-          <%= button_to toggle_event_path(event),
-                params: { slot: slot.iso8601 },
-                form: { class: "bg-white" },
-                class: "block w-full h-8 cursor-pointer hover:brightness-95 #{'ring-2 ring-inset ring-stone-900' if mine}",
-                style: shade, title: label, "aria-label": label do %>
-          <% end %>
-        <% else %>
-          <div class="bg-white">
+        <div class="bg-white">
+          <% if participant %>
+            <button type="button"
+                    data-slot="<%= slot.iso8601 %>" data-mine="<%= mine %>"
+                    aria-pressed="<%= mine %>" aria-label="<%= label %>" title="<%= label %>"
+                    class="block w-full h-8 cursor-pointer hover:brightness-95 focus-visible:outline-2 focus-visible:outline-stone-900 <%= 'ring-2 ring-inset ring-stone-900' if mine %>"
+                    style="<%= shade %>"></button>
+          <% else %>
             <div class="h-8" style="<%= shade %>" title="<%= label %>"></div>
-          </div>
-        <% end %>
+          <% end %>
+        </div>
       <% end %>
     <% end %>
   </div>

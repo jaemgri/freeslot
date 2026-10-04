@@ -24,6 +24,7 @@ class EventsController < ApplicationController
     @counts = @event.counts_by_slot.transform_keys(&:to_i)
     @my_slots = @participant ? @participant.availabilities.pluck(:slot_at).map(&:to_i).to_set : Set.new
     @names = @event.participants.order(:created_at).pluck(:name)
+    @best_ranges, @best_count = @event.best_ranges(@counts)
   end
 
   private

@@ -1,19 +1,30 @@
 class AvailabilitiesController < ApplicationController
-  def toggle
+  MAX_SLOTS = 1000
+
+  def update
     @event = Event.find_by!(slug: params[:id])
     participant = current_participant_for(@event)
     return head :forbidden unless participant
 
-    slot = Time.zone.parse(params[:slot].to_s)
-    return head :unprocessable_entity unless slot && @event.valid_slot?(slot)
+    slots = Array(params[:slots]).first(MAX_SLOTS).filter_map { |s| parse_slot(s) }.uniq
 
-    existing = participant.availabilities.find_by(slot_at: slot)
-    if existing
-      existing.destroy
+    if ActiveModel::Type::Boolean.new.cast(params[:available])
+      rows = slots.map { |slot| { participant_id: participant.id, slot_at: slot } }
+      Availability.insert_all(rows, unique_by: [ :participant_id, :slot_at ]) if rows.any?
     else
-      participant.availabilities.create!(slot_at: slot)
+      participant.availabilities.where(slot_at: slots).delete_all
     end
 
-    redirect_to @event
+    @event.broadcast_refresh_later
+    head :no_content
+  end
+
+  private
+
+  def parse_slot(value)
+    time = Time.zone.parse(value.to_s)
+    time if time && @event.valid_slot?(time)
+  rescue ArgumentError
+    nil
   end
 end
