@@ -16,4 +16,9 @@ class ApplicationController < ActionController::Base
     session[:participants] ||= {}
     session[:participants][participant.event.slug] = participant.id
   end
+
+  def remember_visit(event)
+    visited = Array(session[:visited]) - [ event.slug ]
+    session[:visited] = [ event.slug, *visited ].first(20)
+  end
 end

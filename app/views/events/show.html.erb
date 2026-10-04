@@ -1,3 +1,8 @@
+<% content_for :head do %>
+  <meta property="og:title" content="<%= @event.title %>">
+  <meta property="og:description" content="when are you free? tap your times, no sign-up needed.">
+  <meta property="og:url" content="<%= event_url(@event) %>">
+<% end %>
 <% content_for :title, "#{@event.title} | freeslot" %>
 <%= turbo_stream_from @event %>
 
@@ -7,8 +12,18 @@
   <%= format("%02d:00", @event.start_hour) %>–<%= format("%02d:00", @event.end_hour) %>
 </p>
 
-<div data-controller="clipboard" class="mt-6 rounded-3xl bg-grape p-5 text-white">
+<div data-controller="clipboard share"
+     data-share-title-value="<%= @event.title %>"
+     data-share-text-value="when are you free for <%= @event.title %>? add your times here 👇"
+     data-share-url-value="<%= event_url(@event) %>"
+     class="mt-6 rounded-3xl bg-grape p-5 text-white">
   <p class="text-lg font-bold">send this to the group chat</p>
+
+  <button type="button" hidden data-share-target="button" data-action="share#share"
+          class="mt-3 w-full rounded-full bg-sun py-4 text-lg font-bold text-ink hover:bg-white transition-colors cursor-pointer">
+    share link
+  </button>
+
   <div class="mt-3 flex gap-2">
     <input type="text" readonly value="<%= event_url(@event) %>"
            data-clipboard-target="source"

@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
+  get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
 
   root "events#new"
   resources :events, only: [ :new, :create, :show ], path: "e" do

@@ -6,6 +6,7 @@ class EventsController < ApplicationController
       start_hour: 9,
       end_hour: 21
     )
+    @recent_events = recent_events
   end
 
   def create
@@ -20,6 +21,7 @@ class EventsController < ApplicationController
 
   def show
     @event = Event.find_by!(slug: params[:id])
+    remember_visit(@event)
     @participant = current_participant_for(@event)
     @counts = @event.counts_by_slot.transform_keys(&:to_i)
     @my_slots = @participant ? @participant.availabilities.pluck(:slot_at).map(&:to_i).to_set : Set.new
@@ -28,6 +30,13 @@ class EventsController < ApplicationController
   end
 
   private
+
+  def recent_events
+    slugs = Array(session[:visited])
+    events = Event.where(slug: slugs).where(end_date: Date.current..)
+                  .includes(:participants).index_by(&:slug)
+    slugs.filter_map { |slug| events[slug] }.first(5)
+  end
 
   def event_params
     params.expect(event: [ :title, :start_date, :end_date, :start_hour, :end_hour ])
