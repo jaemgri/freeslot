@@ -2,6 +2,7 @@
   <meta property="og:title" content="freeslot">
   <meta property="og:description" content="make a plan, drop the link in the group chat, see when everyone's free.">
 <% end %>
+
 <h1 class="text-5xl sm:text-6xl font-extrabold tracking-tight leading-[0.95]">
   when's everyone<br>actually free?
 </h1>
@@ -30,45 +31,4 @@
   <h2 class="mt-10 text-lg font-bold">start a new one</h2>
 <% end %>
 
-<%= form_with model: @event, class: "mt-8 space-y-5 rounded-3xl border border-line bg-white p-5 sm:p-6" do |f| %>
-  <% if @event.errors.any? %>
-    <div class="rounded-2xl bg-red-50 text-red-700 px-4 py-3">
-      <% @event.errors.full_messages.each do |message| %>
-        <p><%= message %></p>
-      <% end %>
-    </div>
-  <% end %>
-
-  <div>
-    <%= f.label :title, "what's the plan?", class: "block font-semibold mb-2" %>
-    <%= f.text_field :title, placeholder: "karaoke in shibuya", autofocus: true,
-          class: "w-full rounded-2xl border border-line bg-paper px-4 py-3 text-base" %>
-  </div>
-
-  <div class="grid grid-cols-2 gap-3">
-    <div>
-      <%= f.label :start_date, "from", class: "block font-semibold mb-2" %>
-      <%= f.date_field :start_date, class: "w-full rounded-2xl border border-line bg-paper px-4 py-3 text-base" %>
-    </div>
-    <div>
-      <%= f.label :end_date, "to", class: "block font-semibold mb-2" %>
-      <%= f.date_field :end_date, class: "w-full rounded-2xl border border-line bg-paper px-4 py-3 text-base" %>
-    </div>
-  </div>
-
-  <div class="grid grid-cols-2 gap-3">
-    <div>
-      <%= f.label :start_hour, "earliest", class: "block font-semibold mb-2" %>
-      <%= f.select :start_hour, (0..23).map { |h| [format("%02d:00", h), h] }, {},
-            class: "w-full rounded-2xl border border-line bg-paper px-4 py-3 text-base" %>
-    </div>
-    <div>
-      <%= f.label :end_hour, "latest", class: "block font-semibold mb-2" %>
-      <%= f.select :end_hour, (1..24).map { |h| [format("%02d:00", h), h] }, {},
-            class: "w-full rounded-2xl border border-line bg-paper px-4 py-3 text-base" %>
-    </div>
-  </div>
-
-  <%= f.submit "make the link",
-        class: "w-full rounded-full bg-grape text-white py-4 text-lg font-bold hover:bg-ink transition-colors cursor-pointer" %>
-<% end %>
+<%= render "form", event: @event %>

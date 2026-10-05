@@ -5,6 +5,8 @@ class Event < ApplicationRecord
   has_many :participants, dependent: :destroy
   has_many :availabilities, through: :participants
 
+  has_secure_token :owner_token
+
   before_validation :generate_slug, on: :create
 
   validates :title, presence: true, length: { maximum: 80 }
@@ -44,6 +46,12 @@ class Event < ApplicationRecord
     ranges = starts.slice_when { |a, b| b - a > step }
                    .map { |run| [ Time.zone.at(run.first), Time.zone.at(run.last + step) ] }
     [ ranges, top ]
+  end
+
+  # After the dates or hours change, drop picked times that are no longer on the grid
+  def prune_availabilities!
+    outside = availabilities.reject { |availability| valid_slot?(availability.slot_at) }.map(&:id)
+    Availability.where(id: outside).delete_all if outside.any?
   end
 
   private
